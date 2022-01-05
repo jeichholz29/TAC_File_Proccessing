@@ -1,3 +1,11 @@
+library(dplyr)
+library(readr)
+library(ComplexHeatmap)
+library(reticulate)
+library(circlize)
+library(ggplot2)
+library(ggrepel)
+
 #omit N/As and remove gene symbols
 both <- py$ab24_RLN
 both <- select(both, -GeneSymbols)
