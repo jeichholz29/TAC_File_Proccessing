@@ -11,7 +11,7 @@ both <- py$ab24_RLN
 both <- select(both, -GeneSymbols)
 both <- na.omit(both)
 
-#apply p-values
+#apply p-values from t-test
 ttestRat <- function(df,grp1,grp2) {
   x = df[grp1]
   y = df[grp2]
@@ -22,12 +22,10 @@ ttestRat <- function(df,grp1,grp2) {
 }
 rawpvalue = apply(both,1,ttestRat,grp1 = c(1:4), grp2 = c(5:8))
 
-#Log change
+#apply log change to dataset & calculate fold change
 both <- log2(both)
-
 control <- apply(both[,1:4],1,mean)
 test <- apply(both[,5:8],1,mean)
-
 foldchange <- control- test
 
 #bind p val and log change data
@@ -35,7 +33,6 @@ results = cbind(foldchange,rawpvalue)
 results = as.data.frame(results)
 results$log10 <- -log10(rawpvalue)
 results$probename <- py$ab1wk_S[,1]
-hist(foldchange, xlab = "log2 Fold Change (Control vs Test)")
 
 #Volcano Plot
 volcano = ggplot(data = results,(aes( x = foldchange, y = -log10(rawpvalue))))
@@ -69,11 +66,6 @@ p3
 
 results$delabel <- NA
 results$delabel[results$diffexpressed != "NO"] <- results$probename[results$diffexpressed != "NO"]
-
-ggplot(data=results, aes(x=foldchange, y=-log10(rawpvalue), col=diffexpressed, label=delabel)) + 
-    geom_point() + 
-    theme_minimal() +
-    geom_text()
 
 # plot adding up all layers we have seen so far
  ggplot(data=results, aes(x=foldchange, y=-log10(rawpvalue), col=diffexpressed, label=delabel)) +
