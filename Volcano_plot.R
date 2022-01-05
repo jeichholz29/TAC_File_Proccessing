@@ -22,7 +22,7 @@ ttestRat <- function(df,grp1,grp2) {
 }
 rawpvalue = apply(both,1,ttestRat,grp1 = c(1:4), grp2 = c(5:8))
 
-#apply log change to dataset & calculate fold change
+#Normalize dataset & calculate fold change
 both <- log2(both)
 control <- apply(both[,1:4],1,mean)
 test <- apply(both[,5:8],1,mean)
@@ -42,7 +42,7 @@ p <- volcano + geom_point() + theme_classic()
 p + geom_vline(xintercept=c(-0.6, 0.6), col="red") +
     geom_hline(yintercept=-log10(0.05), col="red")
 
-#add a column of NAs
+#add columns showing whether genes were differentially expressed
 results$diffexpressed <- "NO"
 # if log2Foldchange > 0.6 and pvalue < 0.05, set as "UP" 
 results$diffexpressed[results$foldchange > 0.6 & results$rawpvalue < 0.05] <- "UP"
@@ -58,12 +58,13 @@ p2 <- p + geom_vline(xintercept=c(-0.6, 0.6), col="red") +
 
 p3 <- p2 + scale_color_manual(values=c("blue", "black", "red"))
 
-# 2. to automate a bit: create a named vector: the values are the colors to be used, the names are the categories they will be assigned to:
+#set colors to diffexpressed values
 mycolors <- c("blue", "red", "black")
 names(mycolors) <- c("DOWN", "UP", "NO")
 p3 <- p2 + scale_colour_manual(values = mycolors)
 p3
 
+#create a column so only non-N/A Values are shown in volcano plot
 results$delabel <- NA
 results$delabel[results$diffexpressed != "NO"] <- results$probename[results$diffexpressed != "NO"]
 
