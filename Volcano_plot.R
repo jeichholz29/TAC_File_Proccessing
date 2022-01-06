@@ -34,29 +34,12 @@ results = as.data.frame(results)
 results$log10 <- -log10(rawpvalue)
 results$probename <- py$ab1wk_S[,1]
 
-#Volcano Plot
-volcano = ggplot(data = results,(aes( x = foldchange, y = -log10(rawpvalue))))
-
-p <- volcano + geom_point() + theme_classic()
-
-p + geom_vline(xintercept=c(-0.6, 0.6), col="red") +
-    geom_hline(yintercept=-log10(0.05), col="red")
-
 #add columns showing whether genes were differentially expressed
 results$diffexpressed <- "NO"
 # if log2Foldchange > 0.6 and pvalue < 0.05, set as "UP" 
 results$diffexpressed[results$foldchange > 0.6 & results$rawpvalue < 0.05] <- "UP"
 # if log2Foldchange < -0.6 and pvalue < 0.05, set as "DOWN"
 results$diffexpressed[results$foldchange < -0.6 & results$rawpvalue < 0.05] <- "DOWN"
-
-# Re-plot but this time color the points with "diffexpressed"
-p <- ggplot(data=results, aes(x=foldchange, y=-log10(rawpvalue), col=diffexpressed)) + geom_point() + theme_minimal()
-
-# Add lines as before...
-p2 <- p + geom_vline(xintercept=c(-0.6, 0.6), col="red") +
-        geom_hline(yintercept=-log10(0.05), col="red")
-
-p3 <- p2 + scale_color_manual(values=c("blue", "black", "red"))
 
 #set colors to diffexpressed values
 mycolors <- c("blue", "red", "black")
@@ -67,6 +50,12 @@ p3
 #create a column so only non-N/A Values are shown in volcano plot
 results$delabel <- NA
 results$delabel[results$diffexpressed != "NO"] <- results$probename[results$diffexpressed != "NO"]
+
+#plot ggplot object so final figure loads faster
+ggplot(data=results, aes(x=foldchange, y=-log10(rawpvalue), col=diffexpressed, label=delabel)) + 
+    geom_point() + 
+    theme_minimal() +
+    geom_text()
 
 # plot adding up all layers we have seen so far
  ggplot(data=results, aes(x=foldchange, y=-log10(rawpvalue), col=diffexpressed, label=delabel)) +
