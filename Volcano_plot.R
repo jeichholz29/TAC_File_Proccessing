@@ -32,7 +32,7 @@ foldchange <- control- test
 results = cbind(foldchange,rawpvalue)
 results = as.data.frame(results)
 results$log10 <- -log10(rawpvalue)
-results$probename <- py$ab1wk_S[,1]
+results$probename <- py$df[,1]
 
 #add columns showing whether genes were differentially expressed
 results$diffexpressed <- "NO"
