@@ -7,7 +7,7 @@ library(ggplot2)
 library(ggrepel)
 
 #omit N/As and remove gene symbols
-both <- py$ab24_RLN
+both <- py$df
 both <- select(both, -GeneSymbols)
 both <- na.omit(both)
 
