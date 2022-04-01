@@ -1,0 +1,43 @@
+```{r Processing CEL files}
+library(affycoretools)
+library(devtools)
+library(splitstackshape)
+library(dplyr)
+library(affy)
+library(ComplexHeatmap)
+library(Biobase)
+library(oligo)
+
+###oligo
+#load files
+setwd("~/Downloads/TAC_Files")
+CelFiles = list.celfiles("~/Downloads/TAC_Files", 
+                   full.names = TRUE)
+
+rawData <- read.celfiles(CelFiles)
+
+#normalize data
+eset <- rma(rawData)
+
+eset <- annotateEset(eset, pd.clariom.d.mouse.ht)
+
+#convert to df
+write.exprs(eset, file = 'TAC_dk.txt')
+
+#obtain Gene ids
+GI <- read.delim("GPL23038-70510.txt", check.names = FALSE)
+
+#obtain Gene ids
+GI <- read.delim("GPL23038-70510.txt", check.names = FALSE)
+
+#upload ids to df and split vals
+#abc <- data.frame(GI)
+#a <- cSplit(abc, "GENE.SYMBOL", "//")
+#write.table(a,file = "affymetrix_gene_ids.txt", sep = "\t", row.names = FALSE, quote = FALSE)
+
+TAC <- read.delim("TAC_dk.txt", check.names = FALSE)
+gene_ids <- read.delim("GPL23038_bioProcess.an.txt", check.names = FALSE)
+
+all <- left_join(gene_ids, TAC, by ="ID")
+write.csv(all,"annotated_TAC.csv")
+```
